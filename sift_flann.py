@@ -7,7 +7,7 @@ from traceback2 import print_tb
 import dlib
 
 from utility import rotate_bbox, rotate_bound, warpImg, findFaces, is_two_image_same
-
+from utility import applyBlur, resizeImage
 
 def get_angle_and_box_coord(dst):
     
@@ -31,20 +31,12 @@ def get_angle_and_box_coord(dst):
 
     return -angle, box
 
-def extractSiftFeatures():
-    pass
 
-def applyBlur(image):
-    return cv2.blur(image,(3,3))
-
-def resizeImage(image):
-    return cv2.resize(image, (449,330), cv2.INTER_LINEAR)
 
 def main():
     
-    #template = cv2.imread("test/testcard.png")
-    template = cv2.imread("test/testcard.png")
-    sample = cv2.imread("train/tc_ID_rot.jpg")
+    template = cv2.imread("test/testID.jpg")
+    sample = cv2.imread("train/tc_ID.jpg")
 
     MIN_MATCH_COUNT = 20
 
@@ -77,7 +69,7 @@ def main():
 
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
         h,w,_ = img1.shape
-
+    
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
         dst = cv2.perspectiveTransform(pts,M)
 
@@ -112,13 +104,13 @@ def main():
             plt.title("face_crop_target")
             plt.imshow(face_crop_img_target)
             plt.show()
-            is_two_image_same(face_crop_img_target, face_crop_img_query, 10)
-        
+            is_two_image_same(face_crop_img_target, face_crop_img_query, 15)
         
         
         plt.title("warped_image")
         plt.imshow(warp_image)
         plt.show()
+
     else:
         print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
 

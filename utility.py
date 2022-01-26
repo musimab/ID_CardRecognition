@@ -71,7 +71,7 @@ def warpImg(img, points, w, h):
     points = reorder(points)
     pts1 = np.float32(points)
     pts2 = np.float32([[0,0], [w,0], [0,h], [w,h]])
-    matrix = cv2.getPerspectiveTransform(pts1, pts2)
+    matrix =  cv2.getPerspectiveTransform(pts1, pts2)
     imgWarp = cv2.warpPerspective(img, matrix, (w,h))
     return imgWarp
 
@@ -119,16 +119,23 @@ def is_two_image_same(img1, img2, face_match_count):
         if m.distance < 0.75*n.distance:
             good.append(m)
     print("Total good matches:", len(good))       
-    good = good[:10]
+    good = good[:face_match_count]
 
     img3 = cv2.drawMatches(img1,kp1,img2,kp2,good, None,flags=2)
     plt.title("Face Match")
     plt.imshow(img3, 'gray'),plt.show()
     print("Matches are found - %d/%d" % (len(good), face_match_count))
-    
+
     if len(good) >= face_match_count:
         print("Faces are similar")
         return True
     else :
         print("Faces are not similar")
     return False
+
+def applyBlur(image):
+    return cv2.blur(image,(3,3))
+
+def resizeImage(image):
+    h, w = image.shape[0:2]
+    return cv2.resize(image, (w+100, h+100), cv2.INTER_LINEAR)
