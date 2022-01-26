@@ -95,8 +95,8 @@ def main():
         face_crop_img_target = findFaces(img1)
         
         if(img1 is not None):
-            plt.title("main_image")
-            plt.imshow(img1)
+            plt.title("rotated_image")
+            plt.imshow(rotated_img)
             plt.show()
         
         if(face_crop_img_query is not None):
