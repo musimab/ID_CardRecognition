@@ -31,18 +31,8 @@ def get_angle_and_box_coord(dst):
 
     return -angle, box
 
-
-
-def main():
+def siftMatching(img1, img2):
     
-    template = cv2.imread("test/testID.jpg")
-    sample = cv2.imread("train/tc_ID.jpg")
-
-    MIN_MATCH_COUNT = 20
-
-    img1 = cv2.cvtColor(template, cv2.COLOR_BGR2RGB)         # trainImage
-    img2 = cv2.cvtColor(sample, cv2.COLOR_BGR2RGB)           # queryImage
-    img1 = resizeImage(img1)
     sift = cv2.SIFT_create()
     kp1, des1 = sift.detectAndCompute(img1,None)
     kp2, des2 = sift.detectAndCompute(img2,None)
@@ -61,7 +51,22 @@ def main():
             good.append(m)
     print("Total good matches:", len(good))       
     good = good[:20]
+    return kp1, kp2, good
 
+def main():
+    
+    template = cv2.imread("test/testcard.png")
+    sample = cv2.imread("train/tc_ID.jpg")
+
+    MIN_MATCH_COUNT = 20
+
+    img1 = cv2.cvtColor(template, cv2.COLOR_BGR2RGB)         # trainImage
+    img2 = cv2.cvtColor(sample, cv2.COLOR_BGR2RGB)           # queryImage
+    img1 = resizeImage(img1)
+
+
+    kp1, kp2, good = siftMatching(img1, img2)
+    
     if len(good) >= MIN_MATCH_COUNT:
 
         src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
