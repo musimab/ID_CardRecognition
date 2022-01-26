@@ -1,11 +1,12 @@
 
 import cv2
+from cv2 import resize
 import numpy as np
 from matplotlib import pyplot as plt
 from traceback2 import print_tb
 import dlib
 
-from utility import rotate_bbox, rotate_bound, warpImg, findFaces
+from utility import rotate_bbox, rotate_bound, warpImg, findFaces, is_two_image_same
 
 
 def get_angle_and_box_coord(dst):
@@ -30,33 +31,26 @@ def get_angle_and_box_coord(dst):
 
     return -angle, box
 
-    """ 
-    # Rotated image
-    rotated_img = rotate_bound(image_orig, -angle)
-    (new_height, new_width) = rotated_img.shape[:2]
-    (new_cx, new_cy) = (new_width // 2, new_height // 2)
-    
-    new_bbox = rotate_bbox(box, cx, cy, heigth, width, -angle)
-    warp_image = warpImg(rotated_img, new_bbox ,  heigth, width)
-    face_crop_img = findFaces(warp_image)
-    plt.imshow(face_crop_img)
-    #plt.imshow(warp_image)
-    plt.show()
-    """
-
 def extractSiftFeatures():
     pass
 
+def applyBlur(image):
+    return cv2.blur(image,(3,3))
+
+def resizeImage(image):
+    return cv2.resize(image, (449,330), cv2.INTER_LINEAR)
+
 def main():
     
+    #template = cv2.imread("test/testcard.png")
     template = cv2.imread("test/testcard.png")
-    sample = cv2.imread("train/tc_ID.jpg")
+    sample = cv2.imread("train/tc_ID_rot.jpg")
 
     MIN_MATCH_COUNT = 20
 
     img1 = cv2.cvtColor(template, cv2.COLOR_BGR2RGB)         # trainImage
     img2 = cv2.cvtColor(sample, cv2.COLOR_BGR2RGB)           # queryImage
-
+    img1 = resizeImage(img1)
     sift = cv2.SIFT_create()
     kp1, des1 = sift.detectAndCompute(img1,None)
     kp2, des2 = sift.detectAndCompute(img2,None)
@@ -100,18 +94,27 @@ def main():
         new_bbox = rotate_bbox(box, cx, cy, heigth_q, width_q, angle)
        
         warp_image = warpImg(rotated_img, new_bbox ,  heigth_q, width_q)
-        face_crop_img = findFaces(warp_image)
+        
+        face_crop_img_query = findFaces(warp_image)
         face_crop_img_target = findFaces(img1)
         
-        if(face_crop_img is not None):
-            plt.title("face_crop")
-            plt.imshow(face_crop_img)
+        if(img1 is not None):
+            plt.title("main_image")
+            plt.imshow(img1)
             plt.show()
         
-        if(face_crop_img_target is not None):
+        if(face_crop_img_query is not None):
+            plt.title("face_crop")
+            plt.imshow(face_crop_img_query)
+            plt.show()
+        
+        if(face_crop_img_target is not None and face_crop_img_query is not None):
             plt.title("face_crop_target")
             plt.imshow(face_crop_img_target)
             plt.show()
+            is_two_image_same(face_crop_img_target, face_crop_img_query, 10)
+        
+        
         
         plt.title("warped_image")
         plt.imshow(warp_image)
@@ -121,7 +124,6 @@ def main():
 
     img3 = cv2.drawMatches(img1,kp1,img2,kp2,good, None,flags=2)
 
-    
     fig = plt.figure(figsize=(16, 12))
     plt.title("Matched image")
     plt.imshow(img3, 'gray'),plt.show()
