@@ -60,9 +60,12 @@ def reorder(myPoints):
     add = myPoints.sum(1)
     myPointsNew[0] = myPoints[np.argmin(add)]
     myPointsNew[3] = myPoints[np.argmax(add)]
+
     diff = np.diff(myPoints, axis = 1)
+    
     myPointsNew[1] = myPoints[np.argmin(diff)]
     myPointsNew[2] = myPoints[np.argmax(diff)]
+
     return myPointsNew
 
 
@@ -73,6 +76,7 @@ def warpImg(img, points, w, h):
     pts2 = np.float32([[0,0], [w,0], [0,h], [w,h]])
     matrix =  cv2.getPerspectiveTransform(pts1, pts2)
     imgWarp = cv2.warpPerspective(img, matrix, (w,h))
+
     return imgWarp
 
 def findFaces(image):
@@ -83,7 +87,7 @@ def findFaces(image):
         return None
 
     for face in faces:
-        x1 = face.left()   - 20
+        x1 = face.left()   - 30
         y1 = face.top()    - 70
         x2 = face.right()  + 10
         y2 = face.bottom() + 30

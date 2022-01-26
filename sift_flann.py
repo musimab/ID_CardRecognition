@@ -56,7 +56,7 @@ def siftMatching(img1, img2):
 def main():
     
     template = cv2.imread("test/testcard.png")
-    sample = cv2.imread("train/tc_ID.jpg")
+    sample = cv2.imread("train/tc_ID_rot.jpg")
 
     MIN_MATCH_COUNT = 20
 
@@ -66,7 +66,7 @@ def main():
 
 
     kp1, kp2, good = siftMatching(img1, img2)
-    
+
     if len(good) >= MIN_MATCH_COUNT:
 
         src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
@@ -80,7 +80,6 @@ def main():
 
         border = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
         
-        # Calculate the shape of rotated images
         (heigth_q, width_q) = img2.shape[:2]
         (cx, cy) = (width_q // 2, heigth_q // 2)
 
@@ -110,7 +109,6 @@ def main():
             plt.imshow(face_crop_img_target)
             plt.show()
             is_two_image_same(face_crop_img_target, face_crop_img_query, 15)
-        
         
         plt.title("warped_image")
         plt.imshow(warp_image)
