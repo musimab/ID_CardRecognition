@@ -20,7 +20,7 @@
 
 ![face_crop_target](https://user-images.githubusercontent.com/47300390/151219870-69f785af-0f12-47ab-89a2-a71136b4cf7d.png)
 
-![crop_face](https://user-images.githubusercontent.com/47300390/151219900-390e166e-6b4c-4b47-86b3-a4c41959bb50.png)
+![cropped_fc](https://user-images.githubusercontent.com/47300390/151223859-fb9886f9-7011-4f8a-b5d5-82211b6681d7.png)
 
 ## matched points
 ![Figure_1](https://user-images.githubusercontent.com/47300390/151219748-92ca3625-4248-4edd-ac5f-6114c85a4523.png)
