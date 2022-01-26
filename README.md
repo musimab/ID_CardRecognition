@@ -1,7 +1,16 @@
 # Sift based face recognition from ID cards
 
+## Implementation
 
-
+1. Read train and query images
+2. Extract sift features
+3. Calculate boundries using homograpy transform
+4. find orintation of ID card
+5. Rotate ID card and warp 
+6. Run dlib face detector
+7. Crop face regions
+8. Extract sift features from cropped faces
+9. Compare faces with Lowe's ratio  
 ## input image
 
 ![testcard](https://user-images.githubusercontent.com/47300390/151219450-d2562624-ec52-4666-8ea6-bf0d69e964c4.png)
