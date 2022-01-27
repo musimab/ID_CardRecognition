@@ -38,13 +38,32 @@
 ![matched_points_ID](https://user-images.githubusercontent.com/47300390/151219975-cb3dd920-1597-4246-a6d1-b485a33ebae0.png)
 
 
+
 ## Detection Results
 
-### Total good matches: 134
-### Rotation Angle: -43 degrees
-### Number of Faces: 1
-### Number of Faces: 1
-### Total good matches: 23
-### Matches are found - 10/10
-### Faces are similar
+1. Total good matches: 134
+2. Rotation Angle: -43 degrees
+3. Number of Faces: 1 (input image)
+4. Number of Faces: 1 (output image)
+5. Total good matches: 23
+6. Matches are found - 10/10
+7. Faces are similar
 
+
+## input image
+Lets change our input image 
+![test3](https://user-images.githubusercontent.com/47300390/151328460-76d50a99-0ed3-4f84-a465-867f28e73870.jpg)
+
+## matched regions
+![matched_ID_](https://user-images.githubusercontent.com/47300390/151328387-3eed50f5-35d0-4d39-a6ba-a2ea3a5e86a3.png)
+
+## Detected key points and feature comparision from cropped faces
+![face_matched](https://user-images.githubusercontent.com/47300390/151328422-c1b092f3-9a11-4536-a8d1-0634c37c0c94.png)
+
+1. Total good matches: 96
+2. Rotation Angle: -43 degrees
+3. Number of Faces: 1 (input image)
+4. Number of Faces: 1 (query image)
+5. Total good matches: 0
+6. Matches are found - 1/15
+7. Faces are not similar
