@@ -6,30 +6,9 @@ from matplotlib import pyplot as plt
 from traceback2 import print_tb
 import dlib
 
-from utility import rotate_bbox, rotate_bound, warpImg, findFaces, is_two_image_same
-from utility import applyBlur, resizeImage
+from utils import rotate_bbox, rotate_bound, warpImg, findFaces, is_two_image_same
+from utils import resizeImage, get_warpPerspective, get_angle_and_box_coord
 
-def get_angle_and_box_coord(dst):
-    
-    # cv.minAreaRect returns:
-    # (center(x, y), (width, height), angle of rotation) = cv2.minAreaRect(c)
-    rect = cv2.minAreaRect(dst)
-    box = cv2.boxPoints(rect)
-    box = np.int0(box)
-
-    # Retrieve the key parameters of the rotated bounding box
-    box_center = (int(rect[0][0]),int(rect[0][1])) 
-    box_width = int(rect[1][0])
-    box_height = int(rect[1][1])
-    angle = int(rect[2])
-
-    if box_width < box_height:
-        angle = 90 - angle
-    else:
-        angle = -angle      
-    print("Rotation Angle: " + str(angle) + " degrees")
-
-    return -angle, box
 
 def siftMatching(img1, img2):
     
@@ -53,9 +32,10 @@ def siftMatching(img1, img2):
     good = good[:20]
     return kp1, kp2, good
 
+
 def main():
     
-    template = cv2.imread("test/testcard.png")
+    template = cv2.imread("test/test3.jpg")
     sample = cv2.imread("train/tc_ID_rot.jpg")
 
     MIN_MATCH_COUNT = 20
@@ -63,7 +43,6 @@ def main():
     img1 = cv2.cvtColor(template, cv2.COLOR_BGR2RGB)         # trainImage
     img2 = cv2.cvtColor(sample, cv2.COLOR_BGR2RGB)           # queryImage
     img1 = resizeImage(img1)
-
 
     kp1, kp2, good = siftMatching(img1, img2)
 
@@ -73,13 +52,16 @@ def main():
         dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
 
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+        M2, mask2 = cv2.findHomography(dst_pts, src_pts, cv2.RANSAC,5.0)
         h,w,_ = img1.shape
     
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
         dst = cv2.perspectiveTransform(pts,M)
 
         border = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3)
-        
+
+        warped_image = get_warpPerspective(img2, M2, dst)
+       
         (heigth_q, width_q) = img2.shape[:2]
         (cx, cy) = (width_q // 2, heigth_q // 2)
 
@@ -91,12 +73,17 @@ def main():
        
         warp_image = warpImg(rotated_img, new_bbox ,  heigth_q, width_q)
         
-        face_crop_img_query = findFaces(warp_image)
+        face_crop_img_query = findFaces(warped_image)
         face_crop_img_target = findFaces(img1)
         
         if(img1 is not None):
             plt.title("rotated_image")
             plt.imshow(rotated_img)
+            plt.show()
+        
+        if(warped_image  is not None):
+            plt.title("homography transformed image")
+            plt.imshow(warped_image)
             plt.show()
         
         if(face_crop_img_query is not None):
@@ -110,9 +97,6 @@ def main():
             plt.show()
             is_two_image_same(face_crop_img_target, face_crop_img_query, 15)
         
-        plt.title("warped_image")
-        plt.imshow(warp_image)
-        plt.show()
 
     else:
         print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
